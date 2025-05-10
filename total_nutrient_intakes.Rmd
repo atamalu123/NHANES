@@ -1,0 +1,75 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The data used is from the [Dietary Interview - Total Nutrient Intakes, First Day](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DR1TOT_L.htm).
+
+Each row is responses from a unique candidate
+
+# Data formatting
+
+## Read data
+
+```{r}
+library(dplyr)
+library(ggplot2)
+theme_set(theme_bw())
+
+# Download NHANES August 2021-August 2023 to temporary file    
+download.file("https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DR1TOT_L.xpt", tf <- tempfile(), mode="wb")
+
+# Create Data Frame From Temporary File
+df <- foreign::read.xport(tf)
+```
+
+## Merge data
+
+Next we merge the data with the [demographics dataset](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DEMO_L.htm)
+
+```{r}
+# Download NHANES August 2021-August 2023 to temporary file    
+download.file('https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/DEMO_L.xpt', tf <- tempfile(), mode="wb")
+
+# Create Data Frame From Temporary File
+demographics <- foreign::read.xport(tf)
+```
+
+## Join data
+
+```{r}
+df <- df %>%
+  left_join(demographics, by = join_by(SEQN))
+```
+
+# Water Intake
+
+First let's look at water intake. The variables are
+
+```
+DR1_320Z - Total plain water drank yesterday (gm)
+DR1_330Z - Total tap water drank yesterday (gm)
+DR1BWATZ - Total bottled water drank yesterday (gm)
+```
+Total plain water includes both tap water and bottled water.
+
+## Overall Water Intake Per Person
+
+```{r}
+# Remove missing
+df_water <- df %>% 
+  filter(!is.na(DR1BWATZ))
+
+# 
+df_water <- df %>%
+  
+```
+
+## By type
+
+If you read through the documentation, there are two types of water intake: tap water and bottled water.
+
